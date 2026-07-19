@@ -26,13 +26,13 @@ https://youtu.be/v2CVBazpU2U?si=iJxxjaVZLvGU6vLO
 
 | Component | Pin / Channel | Purpose |
 | :--- | :--- | :--- |
-| **Microcontroller** | — | Main CPU (80 MHz) |
-| **LCD Display** | SPI (PB6–PB9, PB15, PA13) | 160×128 pixel landscape display |
+| **MSPM0G3507** | — | Main CPU (80 MHz) |
+| **ST7735 LCD Display** | SPI (PB6–PB9, PB15, PA13) | 160×128 pixel landscape display |
 | **Player 1 Slide Pot** | PB24 / ADC1 Ch 6 | Right paddle Y-axis control |
 | **Player 2 Slide Pot** | PB18 / ADC0 Ch 5 | Left paddle Y-axis control |
 | **Top Push Button** | PB17 | Toggle Language / Pause Game |
 | **Bottom Push Button** | PB12 | Start Game / Play Again / Resume |
-| **Audio Speaker** | PB0–PB4 (5-bit Binary-Weighted DAC) | Sound effects generation |
+| **Audio** | PB0–PB4 (5-bit Binary-Weighted DAC) | Sound effects generation |
 
 ---
 
@@ -81,25 +81,27 @@ https://youtu.be/v2CVBazpU2U?si=iJxxjaVZLvGU6vLO
 
 ## File Structure
 
+```text
 Pong-Game-Console/
-├── .gitignore                   
-├── Lab9Main.c                   # Tester functions + Main pong game
-├── mspm0g3507.cmd               # Linker command file for MSPM0G3507
+├── .gitignore
+├── Lab9Main.c                 # Tester functions + Main pong game
+├── mspm0g3507.cmd             # Linker command file for MSPM0G3507
 │
-├── Sound.c / Sound.h            # DAC sound generation & audio sample playback
-├── Switch.c / Switch.h          # Debounced edge-triggered button drivers
-├── SmallFont.c / SmallFont.h    # LCD bitmap typography and string rendering
+├── Sound.c / Sound.h          # DAC sound generation & audio sample playback
+├── Switch.c / Switch.h        # Debounced edge-triggered button drivers
+├── SmallFont.c / SmallFont.h  # LCD bitmap typography and string rendering
 │
-├── images/                      # 16-bit color BMP sprite arrays (ball, paddles)
-├── sounds/                      # Digital audio sample arrays
-├── designdocuments/             # System diagrams and initial project proposals
+├── images/                    # 16-bit color BMP sprite arrays (ball, paddles)
+├── sounds/                    # Digital audio sample arrays
+├── designdocuments/           # System diagrams and initial project proposals
 │
-└── inc/                         
-    ├── ST7735.c / ST7735.h      # SPI LCD display driver
-    ├── Clock.c / Clock.h        # 80 MHz PLL initialization
-    ├── ADC.c / ADC.h            # Dual ADC sampling
-    ├── Timer.c / Timer.h        # Periodic interrupt timer (TIMG12)
-    └── DAC5.c / DAC5.h          # 5-bit resistor DAC 
+└── inc/
+    ├── ST7735.c / ST7735.h    # SPI LCD display driver
+    ├── Clock.c / Clock.h      # 80 MHz PLL initialization
+    ├── ADC.c / ADC.h          # Dual ADC sampling
+    ├── Timer.c / Timer.h      # Periodic interrupt timer (TIMG12)
+    └── DAC5.c / DAC5.h        # 5-bit resistor DAC
+```
 
 ---
 
@@ -117,16 +119,17 @@ Executes every 33.3 ms:
 
 ### Main Loop (Foreground Rendering)
 
-Wait for semaphore == 1, then clear it (semaphore = 0)
+1. Wait for semaphore == 1, then clear it (semaphore = 0)  
 2. Switch game state:
- - State 2 (Start Screen): Render Text Menu & Language
- - State 1 (Playing): Clear Old Sprites -> Draw New Sprites -> Update Scores
- - State 0 (Paused): Render "PAUSED" Overlay
- - State 3 (Game Over): Render Winner Text & Listen for Reset
+
+- **State 2 (Start Screen)**: Render Text Menu & Language
+- **State 1 (Playing)**: Clear Old Sprites → Draw New Sprites → Update Scores
+- **State 0 (Paused)**: Render "PAUSED" Overlay
+- **State 3 (Game Over)**: Render Winner Text & Listen for Reset
 
 ---
 
 ## Future Enhancements
-- [ ] Power-ups (speed boost, paddle expansion)
-- [ ] More game modes (survival, time attack)
-- [ ] Building a housing and a transferring wiring to a PCB for a more polished finish
+- Power-ups (speed boost, paddle expansion)
+- More game modes (survival, time attack)
+- Building a housing and a transferring wiring to a PCB for a more polished finish
